@@ -1,5 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from flask_login import UserMixin
+
 
 db = SQLAlchemy()
 
@@ -35,3 +37,8 @@ class Commentaire(db.Model):
     message = db.Column(db.Text, nullable=False)
     date_post = db.Column(db.DateTime, default=datetime.utcnow)
     concert_id = db.Column(db.Integer, db.ForeignKey('concert.id'))
+
+class Utilisateur(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    login = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False) # En production, on hache le mot de passe !

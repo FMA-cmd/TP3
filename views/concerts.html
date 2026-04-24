@@ -1,30 +1,27 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row mt-4">
-    <div class="col-12">
-        <h2 class="mb-4 text-success">Tous les Concerts</h2>
-        
-        <div class="mb-4 p-3 bg-light rounded border">
-            <strong>Filtrer par :</strong> Type | Lieu | Date
-        </div>
+<h2 class="text-success mb-4">Agenda des Concerts</h2>
 
-        <div class="row">
-            {% for concert in concerts %}
-            <div class="col-md-6">
-                <div class="card mb-3 border-primary shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ concert.artiste }}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Le {{ concert.date_concert.strftime('%d/%m/%Y') }} - {{ concert.lieu }}</h6>
-                        <span class="badge bg-secondary">{{ concert.type }}</span>
-                        <hr>
-                        <a href="#" class="btn btn-sm btn-primary">Réserver des places</a>
-                        <a href="#" class="btn btn-sm btn-outline-info">Voir les avis</a>
-                    </div>
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for concert in concerts %}
+    <div class="col">
+        <div class="card h-100 shadow-sm border-2">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h4 class="card-title fw-bold">{{ concert.artiste }}</h4>
+                    <span class="badge bg-info text-dark">Lieu : {{ concert.lieu }}</span>
+                </div>
+                <h5 class="text-muted">Date : {{ concert.date_concert.strftime('%d/%m/%Y') }}</h5>
+                <p class="card-text">{{ concert.description or "Un événement musical exceptionnel à ne pas manquer dans votre région." }}</p>
+                
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <span class="text-primary fw-bold">Places : {{ concert.places_max - concert.places_occupees }} dispos</span>
+                    <button class="btn btn-success">Réserver maintenant</button>
                 </div>
             </div>
-            {% endfor %}
         </div>
     </div>
+    {% endfor %}
 </div>
 {% endblock %}

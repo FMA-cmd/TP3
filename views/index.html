@@ -1,29 +1,57 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusiActu - Actualité Musicale</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand { font-weight: bold; color: #198754 !important; letter-spacing: 1px; }
+        .nav-link { color: #333 !important; }
+        .nav-link:hover { color: #198754 !important; }
+        header hr { border-top: 2px dashed #333; opacity: 0.3; }
+    </style>
+</head>
+<body class="bg-light">
 
-{% block content %}
-<div class="row mt-4">
-    <div class="col-md-6">
-        <h2 class="mb-4">Dernières actualités</h2>
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Le nouvel album de Daft Punk ?</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Electro - Il y a 2 jours</h6>
-                <p class="card-text">Des rumeurs circulent sur un éventuel retour du duo mythique...</p>
-                <a href="#" class="btn btn-sm btn-outline-success">Lire la suite</a>
-            </div>
+    <header class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <a class="navbar-brand fs-2" href="/">MUSIACTU</a>
+            <nav class="nav">
+                <a class="nav-link fw-bold" href="/">Accueil</a> |
+                <a class="nav-link" href="/concerts">Concerts</a> |
+                <a class="nav-link" href="/actualites">Actualités</a> |
+                <a class="nav-link" href="/actualites/jazz">Actualités Jazz</a> |
+                <a class="nav-link" href="/actualites/rock">Actualités Rock</a>
+                {% if current_user.is_authenticated %}
+                    | <a class="nav-link text-danger" href="/logout">Déconnexion</a>
+                {% else %}
+                    | <a class="nav-link" href="/login">Admin</a>
+                {% endif %}
+            </nav>
         </div>
-    </div>
+        <hr>
+    </header>
 
-    <div class="col-md-6">
-        <h2 class="mb-4">Concerts à venir</h2>
-        <div class="card mb-3 border-primary">
-            <div class="card-body">
-                <h5 class="card-title">Musilac 2024</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Le 01/07/2024 - Aix-les-Bains</h6>
-                <p class="card-text">Festival de musique pop-rock avec de nombreux artistes internationaux.</p>
-                <a href="#" class="btn btn-sm btn-primary">Voir les détails & Réserver</a>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
+    <main class="container py-4 bg-white shadow-sm rounded" style="min-height: 70vh;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="container mt-5 py-4 text-center text-muted">
+        <p>&copy; 2024 MusiActu - Projet Web Musique</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
