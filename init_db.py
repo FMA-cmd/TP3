@@ -56,12 +56,14 @@ with app.app_context():
     # 7. Création des concerts
     print("Injection des concerts...")
     co1 = Concert(
-        artiste="Musilac 2024", 
+        artiste="Musilac", 
         lieu="Aix-les-Bains", 
-        date_concert=datetime(2024, 7, 1), 
+        # On met une date très proche pour déclencher l'API Météo !
+        date_concert=datetime(2026, 4, 28), 
         places_max=10000,
         places_occupees=0,
-        description="Le plus grand festival pop-rock de la région sur les bords du lac du Bourget."
+        description="Le plus grand festival pop-rock de la région sur les bords du lac du Bourget.",
+        est_passe=False # On s'assure qu'il n'est pas passé
     )
     co2 = Concert(
         artiste="Jazz à Vienne", 

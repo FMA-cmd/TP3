@@ -1,5 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+import requests
+from datetime import datetime, timedelta
 
 # Importation des modèles
 from models.models import db, Concert, Actualite, Categorie, Utilisateur, Commentaire
@@ -23,6 +25,45 @@ login_manager.login_view = 'login'
 @login_manager.user_loader
 def load_user(user_id):
     return Utilisateur.query.get(int(user_id))
+
+def obtenir_meteo(ville, date_concert):
+    """
+    Fonction bonus : Récupère la météo si le concert est dans moins de 15 jours.
+    Utilise l'API gratuite Open-Meteo (sans clé).
+    """
+    aujourd_hui = datetime.now()
+    ecart = (date_concert - aujourd_hui).days
+
+    # Si le concert est dans les 15 prochains jours
+    if 0 <= ecart <= 15:
+        try:
+            # 1. On trouve les coordonnées GPS (Latitude/Longitude) de la ville
+            url_geo = f"https://geocoding-api.open-meteo.com/v1/search?name={ville}&count=1&language=fr"
+            reponse_geo = requests.get(url_geo).json()
+            
+            if not reponse_geo.get("results"):
+                return None # Ville introuvable
+                
+            lat = reponse_geo["results"][0]["latitude"]
+            lon = reponse_geo["results"][0]["longitude"]
+
+            # 2. On récupère les prévisions météo pour ces coordonnées
+            url_meteo = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,precipitation_sum&timezone=auto"
+            reponse_meteo = requests.get(url_meteo).json()
+
+            # 3. On extrait la température pour la date exacte du concert
+            date_str = date_concert.strftime('%Y-%m-%d')
+            if date_str in reponse_meteo["daily"]["time"]:
+                index = reponse_meteo["daily"]["time"].index(date_str)
+                temp = reponse_meteo["daily"]["temperature_2m_max"][index]
+                pluie = reponse_meteo["daily"]["precipitation_sum"][index]
+                
+                # Formatage de la réponse
+                etat = "Pluvieux 🌧️" if pluie > 2 else "Ensoleillé / Nuageux ⛅"
+                return f"{temp}°C - {etat}"
+        except Exception as e:
+            return None # En cas d'erreur de connexion à l'API
+    return None
 
 # ==========================================
 #              ROUTES PUBLIQUES
@@ -74,9 +115,13 @@ def detail_concert(id):
     form_resa = ReservationForm()
     form_comm = CommentaireForm()
     
+    # 1. LA LIGNE MANQUANTE ÉTAIT ICI : On calcule toujours les places restantes
     places_restantes = concert.places_max - concert.places_occupees
 
-    # CAS 1 : RÉSERVATION (Concert à venir)
+    # 2. Appel de la fonction météo (Bonus)
+    meteo = obtenir_meteo(concert.lieu, concert.date_concert)
+
+    # 3. CAS 1 : RÉSERVATION (Concert à venir)
     if not concert.est_passe and form_resa.validate_on_submit() and 'nb_places' in request.form:
         if not current_user.is_authenticated:
             flash('Vous devez être connecté pour réserver des places.', 'warning')
@@ -91,7 +136,7 @@ def detail_concert(id):
         else:
             flash('Nombre de places invalide ou insuffisant.', 'danger')
 
-    # CAS 2 : COMMENTAIRES (Concert passé)
+    # 4. CAS 2 : COMMENTAIRES (Concert passé)
     if concert.est_passe and form_comm.validate_on_submit() and 'contenu' in request.form:
         if not current_user.is_authenticated:
             flash('Vous devez être connecté pour commenter.', 'warning')
@@ -107,7 +152,8 @@ def detail_concert(id):
         flash('Votre commentaire a été publié avec succès !', 'success')
         return redirect(url_for('detail_concert', id=concert.id))
 
-    return render_template('concert_detail.html', concert=concert, form_resa=form_resa, form_comm=form_comm, places_restantes=places_restantes)
+    # 5. On envoie tout au HTML (y compris les places_restantes !)
+    return render_template('concert_detail.html', concert=concert, form_resa=form_resa, form_comm=form_comm, places_restantes=places_restantes, meteo=meteo)
 
 # ==========================================
 #           ESPACE ADMINISTRATION 
