@@ -39,6 +39,7 @@
                     <td><span class="badge bg-secondary">{{ actu.categorie.nom }}</span></td>
                     <td>{{ actu.date_pub.strftime('%d/%m/%Y') }}</td>
                     <td class="text-end">
+                        <a href="/admin/modifier-actu/{{ actu.id }}" class="btn btn-sm btn-warning me-1">Modifier</a>
                         <a href="/admin/supprimer/actu/{{ actu.id }}" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cette actualité ?');">Supprimer</a>
                     </td>
                 </tr>
@@ -74,6 +75,7 @@
                         {% endif %}
                     </td>
                     <td class="text-end">
+                        <a href="/admin/modifier-concert/{{ concert.id }}" class="btn btn-sm btn-warning me-1">Modifier</a>
                         <a href="/admin/supprimer/concert/{{ concert.id }}" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ce concert ?');">Supprimer</a>
                     </td>
                 </tr>
@@ -99,6 +101,7 @@
                     <td><strong>{{ cat.nom }}</strong></td>
                     <td>{{ cat.actualites|length }} articles</td>
                     <td class="text-end">
+                        <a href="/admin/modifier-categorie/{{ cat.id }}" class="btn btn-sm btn-warning me-1">Modifier</a>
                         <a href="/admin/supprimer/categorie/{{ cat.id }}" class="btn btn-sm btn-danger" onclick="return confirm('Attention ! Cela supprimera aussi tous les articles de cette catégorie. Continuer ?');">Supprimer</a>
                     </td>
                 </tr>

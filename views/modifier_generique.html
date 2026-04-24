@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>{{ titre }}</h2>
+            <a href="/admin/dashboard" class="btn btn-outline-secondary">Annuler</a>
+        </div>
+        
+        <div class="card shadow-sm p-4">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                {% for field in form if field.name != 'csrf_token' and field.name != 'submit' %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">{{ field.label }}</label>
+                        {{ field(class="form-control") }}
+                    </div>
+                {% endfor %}
+                <hr>
+                {{ form.submit(class="btn btn-primary w-100 fw-bold") }}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -21,7 +21,6 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Se connecter")
 
 class InscriptionForm(FlaskForm):
-    """Formulaire pour les nouveaux visiteurs"""
     login = StringField("Nom d'utilisateur", validators=[DataRequired(), Length(min=3, max=50)])
     password = PasswordField("Mot de passe", validators=[DataRequired(), Length(min=4)])
     confirm_password = PasswordField("Confirmez le mot de passe", validators=[DataRequired(), EqualTo('password', message='Les mots de passe doivent correspondre.')])
@@ -34,11 +33,9 @@ class ActualiteForm(FlaskForm):
     submit = SubmitField("Publier l'actualité")
 
 class ReservationForm(FlaskForm):
-    """Formulaire pour réserver des places"""
     nb_places = IntegerField("Nombre de places", validators=[DataRequired()], default=1)
     submit = SubmitField("Confirmer la réservation")
 
 class CommentaireForm(FlaskForm):
-    """Formulaire pour laisser un avis sur un concert passé"""
-    contenu = TextAreaField("Votre avis sur le concert", validators=[DataRequired(), Length(min=5)])
+    contenu = TextAreaField("Votre avis sur le concert", validators=[DataRequired(), Length(min=5, message="Votre commentaire doit faire au moins 5 caractères.")])
     submit = SubmitField("Publier mon commentaire")
