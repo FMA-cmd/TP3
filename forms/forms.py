@@ -1,32 +1,11 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, IntegerField, SubmitField, SelectField, PasswordField
 from wtforms.validators import DataRequired, Length, EqualTo
-from wtforms import IntegerField
-
-class CommentaireForm(FlaskForm):
-    """Formulaire pour poster un avis"""
-    pseudo = StringField('Nom', validators=[DataRequired(), Length(min=2, max=50)])
-    message = TextAreaField('Mon commentaire', validators=[DataRequired()])
-    submit = SubmitField('Envoyer')
-
-class ReservationForm(FlaskForm):
-    """Formulaire simple de réservation"""
-    nb_places = IntegerField('Nombre de places', validators=[DataRequired()])
-    submit = SubmitField('Réserver')
-
-
 
 class LoginForm(FlaskForm):
     login = StringField("Nom d'utilisateur", validators=[DataRequired()])
     password = PasswordField("Mot de passe", validators=[DataRequired()])
     submit = SubmitField("Se connecter")
-
-class ActualiteForm(FlaskForm):
-    titre = StringField("Titre de l'article", validators=[DataRequired()])
-    contenu = TextAreaField("Contenu", validators=[DataRequired()])
-    # On remplira les choix de la catégorie dynamiquement dans la route
-    categorie_id = SelectField("Catégorie", coerce=int)
-    submit = SubmitField("Publier l'actualité")
 
 class InscriptionForm(FlaskForm):
     """Formulaire pour les nouveaux visiteurs"""
@@ -35,7 +14,18 @@ class InscriptionForm(FlaskForm):
     confirm_password = PasswordField("Confirmez le mot de passe", validators=[DataRequired(), EqualTo('password', message='Les mots de passe doivent correspondre.')])
     submit = SubmitField("Créer mon compte")
 
+class ActualiteForm(FlaskForm):
+    titre = StringField("Titre de l'article", validators=[DataRequired()])
+    contenu = TextAreaField("Contenu", validators=[DataRequired()])
+    categorie_id = SelectField("Catégorie", coerce=int)
+    submit = SubmitField("Publier l'actualité")
+
 class ReservationForm(FlaskForm):
     """Formulaire pour réserver des places"""
     nb_places = IntegerField("Nombre de places", validators=[DataRequired()], default=1)
     submit = SubmitField("Confirmer la réservation")
+
+class CommentaireForm(FlaskForm):
+    """Formulaire pour laisser un avis sur un concert passé"""
+    contenu = TextAreaField("Votre avis sur le concert", validators=[DataRequired(), Length(min=5)])
+    submit = SubmitField("Publier mon commentaire")

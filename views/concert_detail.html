@@ -1,39 +1,77 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <div class="row mt-4">
     <div class="col-md-8">
         <h2 class="text-primary fw-bold">{{ concert.artiste }}</h2>
         <p class="text-muted"><i class="bi bi-calendar"></i> Le {{ concert.date_concert.strftime('%d/%m/%Y') }} | Lieu : {{ concert.lieu }}</p>
+        
+        {% if concert.est_passe %}
+            <div class="alert alert-secondary mt-3">
+                <h5 class="fw-bold"><span class="badge bg-danger">CONCERT PASSÉ</span> L'avis de la rédaction :</h5>
+                <p class="mb-0">{{ concert.avis_redacteur or "Un concert mémorable, l'ambiance était incroyable !" }}</p>
+            </div>
+        {% else %}
+            <div class="alert alert-info mt-3">
+                <strong>Disponibilité :</strong> Il reste {{ places_restantes }} places sur {{ concert.places_max }}.
+            </div>
+        {% endif %}
+        
         <hr>
         <p class="fs-5">{{ concert.description or "Rejoignez-nous pour un événement inoubliable." }}</p>
-        
-        <div class="alert alert-info mt-4">
-            <strong>Disponibilité :</strong> Il reste {{ places_restantes }} places sur {{ concert.places_max }}.
-        </div>
+
+        {% if concert.est_passe %}
+            <h4 class="mt-5 border-bottom pb-2">Avis des fans ({{ concert.commentaires|length }})</h4>
+            
+            {% for comm in concert.commentaires %}
+                <div class="card mb-3 border-0 bg-light">
+                    <div class="card-body py-2">
+                        <strong class="text-success">{{ comm.auteur.login }}</strong> 
+                        <small class="text-muted">- le {{ comm.date_post.strftime('%d/%m/%Y à %H:%M') }}</small>
+                        <p class="mb-0 mt-1">{{ comm.contenu }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-muted">Aucun avis pour le moment. Soyez le premier à commenter !</p>
+            {% endfor %}
+        {% endif %}
     </div>
     
     <div class="col-md-4">
         <div class="card shadow-sm border-primary">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Réserver des billets</h5>
+                <h5 class="mb-0">{% if concert.est_passe %}Laisser un avis{% else %}Réserver des billets{% endif %}</h5>
             </div>
             <div class="card-body">
+                
                 {% if not concert.est_passe %}
                     {% if places_restantes > 0 %}
                         <form method="POST">
-                            {{ form.hidden_tag() }}
+                            {{ form_resa.hidden_tag() }}
                             <div class="mb-3">
                                 <label class="form-label">Nombre de places souhaitées :</label>
-                                {{ form.nb_places(class="form-control", min="1", max=places_restantes) }}
+                                {{ form_resa.nb_places(class="form-control", min="1", max=places_restantes) }}
                             </div>
                             <button type="submit" class="btn btn-success w-100 fw-bold">Valider ma réservation</button>
                         </form>
                     {% else %}
-                        <div class="alert alert-danger text-center">COMPLET</div>
+                        <div class="alert alert-danger text-center mb-0">COMPLET</div>
                     {% endif %}
+                
                 {% else %}
-                    <div class="alert alert-secondary text-center">Ce concert est déjà passé.</div>
+                    {% if current_user.is_authenticated %}
+                        <form method="POST">
+                            {{ form_comm.hidden_tag() }}
+                            <div class="mb-3">
+                                {{ form_comm.contenu(class="form-control", rows="4", placeholder="C'était comment ?") }}
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 fw-bold">Publier</button>
+                        </form>
+                    {% else %}
+                        <p class="text-center mb-0"><a href="/login" class="text-decoration-none">Connectez-vous</a> pour commenter.</p>
+                    {% endif %}
                 {% endif %}
+                
             </div>
         </div>
     </div>
