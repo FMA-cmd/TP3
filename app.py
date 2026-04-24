@@ -1,19 +1,15 @@
-# app.py
-from flask import Flask
-from models.database import db
+from flask import Flask, render_template
 
-app = Flask(__name__)
+# On précise à Flask que les fichiers HTML se trouvent dans le dossier 'views'
+app = Flask(__name__, template_folder='views')
 app.secret_key = 'super_cle_secrete_musiactu'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/musiactu_db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Liaison de SQLAlchemy à l'application Flask
-db.init_app(app)
-
+# Route pour la page d'accueil
 @app.route('/')
 def accueil():
-    return "<h1>Bienvenue sur MusiActu !</h1><p>Configuration de la BDD terminée.</p>"
+    # render_template va chercher le fichier index.html dans le dossier views
+    # Pour l'instant, on envoie des listes vides, on connectera la BDD juste après
+    return render_template('index.html', actus=[], concerts=[])
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
