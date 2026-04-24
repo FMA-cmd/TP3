@@ -4,5 +4,6 @@ pandas
 Flask-SQLAlchemy
 Flask-WTF
 pymysql
+Flask-Login
 
 

@@ -17,7 +17,7 @@
                 
                 <div class="d-flex justify-content-between align-items-center mt-4">
                     <span class="text-primary fw-bold">Places : {{ concert.places_max - concert.places_occupees }} dispos</span>
-                    <button class="btn btn-success">Réserver maintenant</button>
+                    <a href="/concert/{{ concert.id }}" class="btn btn-success">Voir & Réserver</a>
                 </div>
             </div>
         </div>

@@ -103,5 +103,55 @@ def ajouter_actu():
     
     return render_template('ajouter_actu.html', form=form)
 
+    # ==========================================
+#         INSCRIPTION & RÉSERVATION
+# ==========================================
+
+@app.route('/inscription', methods=['GET', 'POST'])
+def inscription():
+    """Permet à un visiteur de créer un compte."""
+    form = InscriptionForm()
+    if form.validate_on_submit():
+        # Vérifier si le pseudo existe déjà
+        if Utilisateur.query.filter_by(login=form.login.data).first():
+            flash('Ce nom d\'utilisateur est déjà pris.', 'danger')
+        else:
+            # Création du nouvel utilisateur (visiteur classique, donc est_admin=False par défaut)
+            nouvel_user = Utilisateur(login=form.login.data, password=form.password.data)
+            db.session.add(nouvel_user)
+            db.session.commit()
+            flash('Compte créé avec succès ! Vous pouvez maintenant vous connecter.', 'success')
+            return redirect(url_for('login'))
+    return render_template('inscription.html', form=form)
+
+@app.route('/concert/<int:id>', methods=['GET', 'POST'])
+def detail_concert(id):
+    """Affiche les détails d'un concert et gère la réservation."""
+    concert = Concert.query.get_or_404(id)
+    form = ReservationForm()
+    
+    # Calcul des places restantes
+    places_restantes = concert.places_max - concert.places_occupees
+
+    if form.validate_on_submit():
+        if not current_user.is_authenticated:
+            flash('Vous devez être connecté pour réserver des places.', 'warning')
+            return redirect(url_for('login'))
+            
+        nb_demandees = form.nb_places.data
+        
+        if nb_demandees <= 0:
+            flash('Veuillez demander au moins 1 place.', 'danger')
+        elif nb_demandees > places_restantes:
+            flash(f'Désolé, il ne reste que {places_restantes} places disponibles.', 'danger')
+        else:
+            # On valide la réservation en mettant à jour la BDD
+            concert.places_occupees += nb_demandees
+            db.session.commit()
+            flash(f'Super ! Vous avez réservé {nb_demandees} place(s) pour {concert.artiste}.', 'success')
+            return redirect(url_for('concerts'))
+
+    return render_template('concert_detail.html', concert=concert, form=form, places_restantes=places_restantes)
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -1,33 +1,78 @@
 # init_db.py
 from app import app
-from models.models import db, Categorie, Actualite, Concert
+from models.models import db, Categorie, Actualite, Concert, Utilisateur 
 from datetime import datetime
 
 with app.app_context():
+    print("--- Démarrage de l'initialisation de la base de données ---")
+    
+    # 1. On supprime tout pour éviter les erreurs de colonnes manquantes ("Unknown column")
+    print("Suppression des anciennes tables...")
+    db.drop_all() 
+    
+    # 2. On recrée les tables avec la nouvelle structure (incluant 'est_admin')
+    print("Création des nouvelles tables...")
     db.create_all()
 
-    # Si la table Categorie est vide, on ajoute des données de test
-    if not Categorie.query.first():
-        print("Injection des données de test...")
-        
-        # 1. Création des catégories
-        c_electro = Categorie(nom="Electro")
-        c_rock = Categorie(nom="Rock")
-        c_jazz = Categorie(nom="Jazz")
-        db.session.add_all([c_electro, c_rock, c_jazz])
-        db.session.commit() # On sauvegarde pour générer les IDs
+    # 3. Création du compte Administrateur (est_admin=True)
+    print("Création du compte Administrateur...")
+    admin = Utilisateur(login="admin", password="password123", est_admin=True)
+    db.session.add(admin)
+    
+    # 4. Création d'un compte Visiteur de test (est_admin=False)
+    print("Création d'un compte Visiteur de test...")
+    visiteur = Utilisateur(login="testuser", password="user123", est_admin=False)
+    db.session.add(visiteur)
 
-        # 2. Création des actualités
-        a1 = Actualite(titre="Le nouvel album de Daft Punk ?", contenu="Des rumeurs...", categorie_id=c_electro.id)
-        a2 = Actualite(titre="Retour du Rock en 2024", contenu="Le rock n'est pas mort !", categorie_id=c_rock.id)
-        db.session.add_all([a1, a2])
+    # 5. Création des catégories
+    print("Injection des catégories...")
+    c_electro = Categorie(nom="Electro")
+    c_rock = Categorie(nom="Rock")
+    c_jazz = Categorie(nom="Jazz")
+    db.session.add_all([c_electro, c_rock, c_jazz])
+    db.session.commit() # On commit pour récupérer les IDs des catégories
 
-        # 3. Création des concerts
-        co1 = Concert(artiste="Musilac 2024", lieu="Aix-les-Bains", date_concert=datetime(2024, 7, 1), places_max=10000)
-        co2 = Concert(artiste="Jazz à Vienne", lieu="Vienne", date_concert=datetime(2024, 7, 15), places_max=5000)
-        db.session.add_all([co1, co2])
+    # 6. Création des actualités (News)
+    print("Injection des actualités...")
+    a1 = Actualite(
+        titre="Le nouvel album de Daft Punk ?", 
+        contenu="Des rumeurs persistantes annoncent un retour du duo casqué en studio pour 2024...", 
+        categorie_id=c_electro.id
+    )
+    a2 = Actualite(
+        titre="Retour du Rock en 2024", 
+        contenu="Les guitares saturent à nouveau les ondes avec l'émergence d'une nouvelle scène rock garage.", 
+        categorie_id=c_rock.id
+    )
+    a3 = Actualite(
+        titre="Jazz à Vienne : Programmation dévoilée", 
+        contenu="Le festival mythique revient avec une tête d'affiche internationale qui va ravir les puristes.", 
+        categorie_id=c_jazz.id
+    )
+    db.session.add_all([a1, a2, a3])
 
-        db.session.commit()
-        print("Base de données initialisée avec succès !")
-    else:
-        print("Les données existent déjà.")
+    # 7. Création des concerts
+    print("Injection des concerts...")
+    co1 = Concert(
+        artiste="Musilac 2024", 
+        lieu="Aix-les-Bains", 
+        date_concert=datetime(2024, 7, 1), 
+        places_max=10000,
+        places_occupees=0,
+        description="Le plus grand festival pop-rock de la région sur les bords du lac du Bourget."
+    )
+    co2 = Concert(
+        artiste="Jazz à Vienne", 
+        lieu="Vienne", 
+        date_concert=datetime(2024, 7, 15), 
+        places_max=5000,
+        places_occupees=4950, # Presque complet pour tester les limites
+        description="Une soirée magique dans le théâtre antique de Vienne."
+    )
+    db.session.add_all([co1, co2])
+
+    # 8. Sauvegarde finale
+    db.session.commit()
+    print("\n--- Base de données initialisée avec succès ! ---")
+    print("Identifiants Admin : admin / password123")
+    print("Identifiants User  : testuser / user123")

@@ -41,4 +41,5 @@ class Commentaire(db.Model):
 class Utilisateur(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(50), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False) # En production, on hache le mot de passe !
+    password = db.Column(db.String(255), nullable=False)
+    est_admin = db.Column(db.Boolean, default=False)
