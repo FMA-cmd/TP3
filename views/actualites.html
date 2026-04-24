@@ -3,17 +3,17 @@
 {% block content %}
 <div class="row mt-4">
     <div class="col-12">
-        <h2 class="mb-4 text-success">{{ titre_page }}</h2>
+        <h2 class="mb-4 text-success">Actualité Musicale</h2>
         
         <div class="list-group">
             {% for actu in actus %}
             <a href="#" class="list-group-item list-group-item-action mb-2 border rounded shadow-sm">
                 <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1">{{ actu.titre }}</h5>
-                    <small class="text-muted">{{ actu.date }}</small>
+                    <small class="text-muted">{{ actu.date_pub.strftime('%d/%m/%Y') }}</small>
                 </div>
                 <p class="mb-1">Découvrez les dernières rumeurs et annonces concernant ce sujet...</p>
-                <small class="badge bg-success">{{ actu.categorie }}</small>
+                <small class="badge bg-success">{{ actu.categorie.nom }}</small>
             </a>
             {% endfor %}
         </div>

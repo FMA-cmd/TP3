@@ -10,29 +10,25 @@ def accueil():
 
 @app.route('/concerts')
 def concerts():
-    liste_concerts = [
-        {"titre": "Musilac 2024", "date": "01/07/2024", "lieu": "Aix-les-Bains", "type": "Festival"},
-        {"titre": "Jazz à Vienne", "date": "15/07/2024", "lieu": "Vienne", "type": "Jazz"}
-    ]
+    # On récupère TOUS les concerts dans la BDD
+    liste_concerts = Concert.query.all()
     return render_template('concerts.html', concerts=liste_concerts)
 
 @app.route('/actualites')
 def actualites():
-    liste_actus = [
-        {"titre": "Le nouvel album de Daft Punk ?", "categorie": "Electro", "date": "Il y a 2 jours"},
-        {"titre": "Retour du Rock en 2024", "categorie": "Rock", "date": "Il y a 1 semaine"}
-    ]
-    return render_template('actualites.html', actus=liste_actus)
+    # On récupère toutes les actus triées par date de publication (de la plus récente à la plus ancienne)
+    liste_actus = Actualite.query.order_by(Actualite.date_pub.desc()).all()
+    return render_template('actualites.html', actus=liste_actus, titre_page="Toute l'Actualité Musicale")
 
 @app.route('/actualites/<genre>')
 def actualites_par_genre(genre):
-    toutes_les_actus = [
-        {"titre": "Le nouvel album de Daft Punk ?", "categorie": "Electro", "date": "Il y a 2 jours"},
-        {"titre": "Retour du Rock en 2024", "categorie": "Rock", "date": "Il y a 1 semaine"},
-        {"titre": "Miles Davis à l'honneur", "categorie": "Jazz", "date": "Hier"}
-    ]
-    actus_filtrees = [actu for actu in toutes_les_actus if actu['categorie'].lower() == genre.lower()]
-    return render_template('actualites.html', actus=actus_filtrees, titre_page=f"Actualités {genre.capitalize()}")
+    # 1. On cherche la catégorie correspondante dans la BDD (insensible à la casse)
+    categorie = Categorie.query.filter(Categorie.nom.ilike(genre)).first_or_404()
+    
+    # 2. On récupère les actus liées à l'ID de cette catégorie
+    actus_filtrees = Actualite.query.filter_by(categorie_id=categorie.id).all()
+    
+    return render_template('actualites.html', actus=actus_filtrees, titre_page=f"Actualités {categorie.nom}")
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
