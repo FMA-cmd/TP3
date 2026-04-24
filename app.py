@@ -1,15 +1,28 @@
 from flask import Flask, render_template
 
-# On précise à Flask que les fichiers HTML se trouvent dans le dossier 'views'
 app = Flask(__name__, template_folder='views')
 app.secret_key = 'super_cle_secrete_musiactu'
 
-# Route pour la page d'accueil
 @app.route('/')
 def accueil():
-    # render_template va chercher le fichier index.html dans le dossier views
-    # Pour l'instant, on envoie des listes vides, on connectera la BDD juste après
-    return render_template('index.html', actus=[], concerts=[])
+    return render_template('index.html')
+
+
+@app.route('/concerts')
+def concerts():
+    liste_concerts = [
+        {"titre": "Musilac 2024", "date": "01/07/2024", "lieu": "Aix-les-Bains", "type": "Festival"},
+        {"titre": "Jazz à Vienne", "date": "15/07/2024", "lieu": "Vienne", "type": "Jazz"}
+    ]
+    return render_template('concerts.html', concerts=liste_concerts)
+
+@app.route('/actualites')
+def actualites():
+    liste_actus = [
+        {"titre": "Le nouvel album de Daft Punk ?", "categorie": "Electro", "date": "Il y a 2 jours"},
+        {"titre": "Retour du Rock en 2024", "categorie": "Rock", "date": "Il y a 1 semaine"}
+    ]
+    return render_template('actualites.html', actus=liste_actus)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-12">
+        <h2 class="mb-4 text-success">Tous les Concerts</h2>
+        
+        <div class="mb-4 p-3 bg-light rounded border">
+            <strong>Filtrer par :</strong> Type | Lieu | Date
+        </div>
+
+        <div class="row">
+            {% for concert in concerts %}
+            <div class="col-md-6">
+                <div class="card mb-3 border-primary shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ concert.titre }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Le {{ concert.date }} - {{ concert.lieu }}</h6>
+                        <span class="badge bg-secondary">{{ concert.type }}</span>
+                        <hr>
+                        <a href="#" class="btn btn-sm btn-primary">Réserver des places</a>
+                        <a href="#" class="btn btn-sm btn-outline-info">Voir les avis</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
