@@ -4,7 +4,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 # Importation de la base de données et des modèles (MVC) [cite: 23]
 from models.models import db, Concert, Actualite, Categorie, Utilisateur
 # Importation des formulaires Flask-WTF 
-from forms.forms import LoginForm, ActualiteForm
+from forms.forms import LoginForm, ActualiteForm,InscriptionForm
 
 app = Flask(__name__, template_folder='views')
 app.secret_key = 'super_cle_secrete_musiactu'
