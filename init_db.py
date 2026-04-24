@@ -6,7 +6,7 @@ from datetime import datetime
 with app.app_context():
     print("--- Démarrage de l'initialisation de la base de données ---")
     
-    # 1. On supprime tout pour éviter les erreurs de colonnes manquantes ("Unknown column")
+    # 1. On supprime tout pour éviter les erreurs de colonnes manquantes
     print("Suppression des anciennes tables...")
     db.drop_all() 
     
@@ -22,7 +22,9 @@ with app.app_context():
     # 4. Création d'un compte Visiteur de test (est_admin=False)
     print("Création d'un compte Visiteur de test...")
     visiteur = Utilisateur(login="testuser", password="user123", est_admin=False)
+    visiteur2 = Utilisateur(login="faouzi", password="salut", est_admin=False)
     db.session.add(visiteur)
+    db.session.add(visiteur2)
 
     # 5. Création des catégories
     print("Injection des catégories...")
@@ -71,8 +73,8 @@ with app.app_context():
     )
     db.session.add_all([co1, co2])
 
-    # 8. Sauvegarde finale
     db.session.commit()
     print("\n--- Base de données initialisée avec succès ! ---")
     print("Identifiants Admin : admin / password123")
     print("Identifiants User  : testuser / user123")
+    print("Identifiants User  : faouzi / salut")
