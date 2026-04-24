@@ -4,7 +4,6 @@ from models.models import db, Categorie, Actualite, Concert
 from datetime import datetime
 
 with app.app_context():
-    # Crée la base de données et toutes les tables basées sur models.py
     db.create_all()
 
     # Si la table Categorie est vide, on ajoute des données de test

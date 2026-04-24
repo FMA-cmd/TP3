@@ -1,7 +1,15 @@
 from flask import Flask, render_template
+from models.models import db, Concert, Actualite, Categorie
 
 app = Flask(__name__, template_folder='views')
 app.secret_key = 'super_cle_secrete_musiactu'
+
+# --- CONFIGURATION DE LA BASE DE DONNÉES ---
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://tp_user:tp_pass@localhost/musiactu_db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# C'est cette ligne qui relie SQLAlchemy à ton application Flask !
+db.init_app(app)
 
 @app.route('/')
 def accueil():
