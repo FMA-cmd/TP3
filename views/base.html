@@ -26,7 +26,7 @@
                 
                 {% if current_user.is_authenticated %}
                     {% if current_user.est_admin %}
-                        | <a class="nav-link text-primary fw-bold" href="/admin/ajouter-actu">➕ Ajouter une Actu</a>
+                        | | <a class="nav-link text-primary fw-bold" href="/admin/dashboard"> Tableau de Bord</a>
                     {% endif %}
                     | <a class="nav-link text-danger" href="/logout">Déconnexion ({{ current_user.login }})</a>
                 {% else %}

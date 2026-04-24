@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-success"><i class="bi bi-gear-fill"></i> Tableau de bord Administrateur</h2>
+</div>
+
+<ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#actus" type="button">📰 Actualités</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#concerts" type="button">🎸 Concerts</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#categories" type="button">🏷️ Catégories</button>
+    </li>
+</ul>
+
+<div class="tab-content" id="adminTabsContent">
+    
+    <div class="tab-pane fade show active" id="actus">
+        <div class="mb-3 text-end">
+            <a href="/admin/ajouter-actu" class="btn btn-success">+ Nouvelle Actualité</a>
+        </div>
+        <table class="table table-hover border">
+            <thead class="table-light">
+                <tr>
+                    <th>Titre</th>
+                    <th>Catégorie</th>
+                    <th>Date</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for actu in actus %}
+                <tr>
+                    <td>{{ actu.titre }}</td>
+                    <td><span class="badge bg-secondary">{{ actu.categorie.nom }}</span></td>
+                    <td>{{ actu.date_pub.strftime('%d/%m/%Y') }}</td>
+                    <td class="text-end">
+                        <a href="/admin/supprimer/actu/{{ actu.id }}" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cette actualité ?');">Supprimer</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tab-pane fade" id="concerts">
+        <table class="table table-hover border">
+            <thead class="table-light">
+                <tr>
+                    <th>Artiste</th>
+                    <th>Lieu</th>
+                    <th>Date</th>
+                    <th>Places</th>
+                    <th>Statut</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for concert in concerts %}
+                <tr>
+                    <td><strong>{{ concert.artiste }}</strong></td>
+                    <td>{{ concert.lieu }}</td>
+                    <td>{{ concert.date_concert.strftime('%d/%m/%Y') }}</td>
+                    <td>{{ concert.places_occupees }} / {{ concert.places_max }}</td>
+                    <td>
+                        {% if concert.est_passe %}
+                            <span class="badge bg-danger">Passé</span>
+                        {% else %}
+                            <span class="badge bg-success">À venir</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <a href="/admin/supprimer/concert/{{ concert.id }}" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ce concert ?');">Supprimer</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tab-pane fade" id="categories">
+        <table class="table table-hover border">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Nom de la catégorie</th>
+                    <th>Nombre d'articles liés</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cat in categories %}
+                <tr>
+                    <td>{{ cat.id }}</td>
+                    <td><strong>{{ cat.nom }}</strong></td>
+                    <td>{{ cat.actualites|length }} articles</td>
+                    <td class="text-end">
+                        <a href="/admin/supprimer/categorie/{{ cat.id }}" class="btn btn-sm btn-danger" onclick="return confirm('Attention ! Cela supprimera aussi tous les articles de cette catégorie. Continuer ?');">Supprimer</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

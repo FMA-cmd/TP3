@@ -1,6 +1,19 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, IntegerField, SubmitField, SelectField, PasswordField
+from wtforms import StringField, TextAreaField, IntegerField, SubmitField, SelectField, PasswordField, DateField, BooleanField
 from wtforms.validators import DataRequired, Length, EqualTo
+
+class CategorieForm(FlaskForm):
+    nom = StringField("Nom de la catégorie", validators=[DataRequired()])
+    submit = SubmitField("Enregistrer")
+
+class ConcertForm(FlaskForm):
+    artiste = StringField("Artiste", validators=[DataRequired()])
+    lieu = StringField("Lieu", validators=[DataRequired()])
+    date_concert = DateField("Date (AAAA-MM-JJ)", format='%Y-%m-%d', validators=[DataRequired()])
+    places_max = IntegerField("Capacité maximum", validators=[DataRequired()])
+    description = TextAreaField("Description")
+    est_passe = BooleanField("Concert terminé ?")
+    submit = SubmitField("Enregistrer le concert")
 
 class LoginForm(FlaskForm):
     login = StringField("Nom d'utilisateur", validators=[DataRequired()])

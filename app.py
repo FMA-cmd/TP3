@@ -201,5 +201,45 @@ def ajouter_actu():
     
     return render_template('ajouter_actu.html', form=form)
 
+@app.route('/admin/dashboard')
+@login_required
+def admin_dashboard():
+    """Affiche le tableau de bord avec toutes les données."""
+    if not current_user.est_admin:
+        flash("Accès refusé.", "danger")
+        return redirect(url_for('accueil'))
+    
+    # On récupère toutes les données de la base
+    actus = Actualite.query.all()
+    concerts = Concert.query.order_by(Concert.date_concert.desc()).all()
+    categories = Categorie.query.all()
+    
+    return render_template('admin_dashboard.html', actus=actus, concerts=concerts, categories=categories)
+
+@app.route('/admin/supprimer/<type_item>/<int:id>')
+@login_required
+def supprimer_item(type_item, id):
+    """Route générique pour supprimer un élément (Actu, Concert ou Catégorie)."""
+    if not current_user.est_admin:
+        return redirect(url_for('accueil'))
+        
+    if type_item == 'actu':
+        item = Actualite.query.get_or_404(id)
+    elif type_item == 'concert':
+        item = Concert.query.get_or_404(id)
+        # Sécurité : on supprime d'abord les commentaires liés au concert
+        Commentaire.query.filter_by(concert_id=id).delete() 
+    elif type_item == 'categorie':
+        item = Categorie.query.get_or_404(id)
+        # Sécurité : on supprime les actus liées à cette catégorie
+        Actualite.query.filter_by(categorie_id=id).delete() 
+    else:
+        return redirect(url_for('admin_dashboard'))
+    
+    db.session.delete(item)
+    db.session.commit()
+    flash(f"Élément supprimé avec succès !", "success")
+    return redirect(url_for('admin_dashboard'))
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
