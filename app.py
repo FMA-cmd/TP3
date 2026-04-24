@@ -9,7 +9,7 @@ from forms.forms import LoginForm, ActualiteForm,InscriptionForm
 app = Flask(__name__, template_folder='views')
 app.secret_key = 'super_cle_secrete_musiactu'
 
-# --- CONFIGURATION DE LA BASE DE DONNÉES (MariaDB) [cite: 24] ---
+# --- CONFIGURATION DE LA BASE DE DONNÉES (MariaDB) ---
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://tp_user:tp_pass@localhost/musiactu_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
