@@ -7,9 +7,6 @@ with app.app_context():
     db.drop_all() 
     db.create_all()
 
-    # ==========================================
-    # 1. UTILISATEURS
-    # ==========================================
     print("Création Administrateur et Utilisateurs de test...")
     admin = Utilisateur(login="admin", password="password123", est_admin=True)
     visiteur = Utilisateur(login="visiteur", password="password123", est_admin=False)
@@ -20,9 +17,6 @@ with app.app_context():
     db.session.add_all([admin, visiteur, u_rock, u_jazz, u_electro])
     db.session.commit()
 
-    # ==========================================
-    # 2. CATÉGORIES & ACTUALITÉS
-    # ==========================================
     print("Création des catégories et actualités...")
     c_electro = Categorie(nom="Electro")
     c_rock = Categorie(nom="Rock")
@@ -35,9 +29,6 @@ with app.app_context():
     a3 = Actualite(titre="Festival Django Reinhardt : Programmation", contenu="Le célèbre festival dévoile une affiche exceptionnelle pour son édition estivale avec Ibrahim Maalouf en tête d'affiche.", categorie_id=c_jazz.id)
     db.session.add_all([a1, a2, a3])
 
-    # ==========================================
-    # 3. CONCERTS À VENIR (Pour la réservation et la météo)
-    # ==========================================
     print("Création des concerts à venir...")
     date_proche = datetime.now() + timedelta(days=5) 
     date_lointaine = datetime.now() + timedelta(days=45) 
@@ -47,9 +38,6 @@ with app.app_context():
     
     db.session.add_all([co_futur1, co_futur2])
 
-    # ==========================================
-    # 4. CONCERTS PASSÉS (Pour les commentaires)
-    # ==========================================
     print("Création des concerts passés...")
     co_passe_rock = Concert(
         artiste="Arctic Monkeys", lieu="Accor Arena, Paris", date_concert=datetime(2023, 5, 10), 
@@ -75,9 +63,6 @@ with app.app_context():
     db.session.add_all([co_passe_rock, co_passe_jazz, co_passe_electro])
     db.session.commit()
 
-    # ==========================================
-    # 5. COMMENTAIRES (Sur les concerts passés)
-    # ==========================================
     print("Ajout des commentaires de test...")
     
     # Avis sur le concert Rock

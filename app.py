@@ -71,7 +71,6 @@ def actualites_par_genre(genre):
     actus_filtrees = Actualite.query.filter_by(categorie_id=categorie.id).all()
     return render_template('actualites.html', actus=actus_filtrees, titre_page=f"Actualités {categorie.nom}")
 
-# === UTILISATEUR & CONCERT ===
 @app.route('/inscription', methods=['GET', 'POST'])
 def inscription():
     form = InscriptionForm()
